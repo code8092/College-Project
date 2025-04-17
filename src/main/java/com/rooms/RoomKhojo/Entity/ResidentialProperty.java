@@ -1,6 +1,6 @@
 package com.rooms.RoomKhojo.Entity;
 
-import com.rooms.RoomKhojo.Enum.PropertyType;
+import com.rooms.RoomKhojo.Enum.ResidentialPropertyType;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -19,15 +19,11 @@ public class ResidentialProperty extends Property{
 
     public ResidentialProperty(){}
 
-    public ResidentialProperty(String roomSize, List<String> facality) {
-        this.roomSize = roomSize;
-        this.facility = facality;
-    }
 
-    public ResidentialProperty(long id, Owner owner, PropertyType propertyType, String location, List<String> images, String roomSize, List<String> facality) {
-        super(id, owner, propertyType, location, images);
+    public ResidentialProperty(long id, Owner owner, ResidentialPropertyType residentialPropertyType, Location location, List<String> images, String roomSize, List<String> facility) {
+        super(id, owner, residentialPropertyType, location, images);
         this.roomSize = roomSize;
-        this.facility = facality;
+        this.facility = facility;
     }
 
     public String getRoomSize() {
@@ -38,12 +34,12 @@ public class ResidentialProperty extends Property{
         this.roomSize = roomSize;
     }
 
-    public List<String> getFacality() {
+    public List<String> getFacilities() {
         return facility;
     }
 
-    public void setFacality(List<String> facality) {
-        this.facility = facality;
+    public void setFacilities(List<String> facilities) {
+        this.facility = facilities;
     }
 
     @Override
@@ -51,11 +47,12 @@ public class ResidentialProperty extends Property{
         return "ResidentialProperty{" +
                 "id=" + getId() +
                 ", owner=" + (getOwner() != null ? getOwner().getName() : "none") +
-                ", propertyType=" + getPropertyType() +
-                ", location='" + getLocation() + '\'' +
+                ", propertyType=" + getResidentialPropertyType() +
+                ", location=" + getLocation() +
                 ", roomSize='" + roomSize + '\'' +
                 ", facilities=" + facility +
-                ", imagesCount=" + getImages().size() +
+                ", imagesCount=" + (getImages() != null ? getImages().size() : 0) +
                 '}';
     }
+
 }

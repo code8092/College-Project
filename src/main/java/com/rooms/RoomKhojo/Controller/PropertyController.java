@@ -11,6 +11,5 @@ public class PropertyController {
     @Autowired
     private PropertyService propertyService;
 
-    public
 
 }

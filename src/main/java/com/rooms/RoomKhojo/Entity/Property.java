@@ -1,6 +1,6 @@
 package com.rooms.RoomKhojo.Entity;
 
-import com.rooms.RoomKhojo.Enum.PropertyType;
+import com.rooms.RoomKhojo.Enum.ResidentialPropertyType;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -18,9 +18,11 @@ public class Property {
 
     @Enumerated(EnumType.STRING)
     //@Enumerated for the PropertyType enum field
-    private PropertyType propertyType;
+    private ResidentialPropertyType residentialPropertyType;
 
-    private String location;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "location_id")
+    private Location location;
 
     @ElementCollection
     //@ElementCollection to store the list of image paths
@@ -29,11 +31,20 @@ public class Property {
     private List<String> images = new ArrayList<>();
 
     public Property(){}
+//constructor
+//    public Property(long id, Owner owner, ResidentialPropertyType residentialPropertyType, String location, List<String> images) {
+//        this.id = id;
+//        this.owner = owner;
+//        this.residentialPropertyType = residentialPropertyType;
+//        this.location = location;
+//        this.images = images;
+//    }
 
-    public Property(long id, Owner owner, PropertyType propertyType, String location, List<String> images) {
+
+    public Property(long id, Owner owner, ResidentialPropertyType residentialPropertyType, Location location, List<String> images) {
         this.id = id;
         this.owner = owner;
-        this.propertyType = propertyType;
+        this.residentialPropertyType = residentialPropertyType;
         this.location = location;
         this.images = images;
     }
@@ -54,19 +65,19 @@ public class Property {
         this.owner = owner;
     }
 
-    public PropertyType getPropertyType() {
-        return propertyType;
+    public ResidentialPropertyType getResidentialPropertyType() {
+        return residentialPropertyType;
     }
 
-    public void setPropertyType(PropertyType propertyType) {
-        this.propertyType = propertyType;
+    public void setResidentialPropertyType(ResidentialPropertyType residentialPropertyType) {
+        this.residentialPropertyType = residentialPropertyType;
     }
 
-    public String getLocation() {
+    public Location getLocation() {
         return location;
     }
 
-    public void setLocation(String location) {
+    public void setLocation(Location location) {
         this.location = location;
     }
 
@@ -78,14 +89,66 @@ public class Property {
         this.images = images;
     }
 
+    //    public long getId() {
+//        return id;
+//    }
+//
+//    public void setId(long id) {
+//        this.id = id;
+//    }
+//
+//    public Owner getOwner() {
+//        return owner;
+//    }
+//
+//    public void setOwner(Owner owner) {
+//        this.owner = owner;
+//    }
+//
+//    public ResidentialPropertyType getPropertyType() {
+//        return residentialPropertyType;
+//    }
+//
+//    public void setPropertyType(ResidentialPropertyType residentialPropertyType) {
+//        this.residentialPropertyType = residentialPropertyType;
+//    }
+//
+//    public String getLocation() {
+//        return location;
+//    }
+//
+//    public void setLocation(String location) {
+//        this.location = location;
+//    }
+//
+//    public List<String> getImages() {
+//        return images;
+//    }
+//
+//    public void setImages(List<String> images) {
+//        this.images = images;
+//    }
+
     @Override
     public String toString() {
         return "Property{" +
                 "id=" + id +
                 ", owner=" + owner +
-                ", propertyType=" + propertyType +
-                ", location='" + location + '\'' +
+                ", residentialPropertyType=" + residentialPropertyType +
+                ", location=" + location +
                 ", images=" + images +
                 '}';
     }
+
+
+//    @Override
+//    public String toString() {
+//        return "Property{" +
+//                "id=" + id +
+//                ", owner=" + owner +
+//                ", propertyType=" + residentialPropertyType +
+//                ", location='" + location + '\'' +
+//                ", images=" + images +
+//                '}';
+//    }
 }

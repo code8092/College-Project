@@ -1,5 +1,5 @@
 package com.rooms.RoomKhojo.Enum;
 
-public enum PropertyType {
+public enum ResidentialPropertyType {
     FLAT, PG, HOSTEL, HOUSES
 }
