@@ -19,18 +19,32 @@ public class CustomerController {
     @GetMapping
     public ResponseEntity<List<Customer>> getallCustomer(){
         List<Customer> customers = customerService.getAllCustomer();
-        return new ResponseEntity<>(customers,HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(customers,HttpStatus.OK);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
     }
 
     @GetMapping("/{id}")
     public Customer getCustomerById(@PathVariable("id") long id) throws Exception {
-        return customerService.getCustomerById(id);
+        try {
+            return customerService.getCustomerById(id);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
     }
 
     @PostMapping("/save")
     public ResponseEntity<Customer> saveCustomer(@RequestBody Customer customer){
         Customer saveCustomer = customerService.saveCustomer(customer);
-        return new ResponseEntity<>(saveCustomer,HttpStatus.CREATED);
+        try {
+            return new ResponseEntity<>(saveCustomer,HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @PutMapping("/update/{id}")

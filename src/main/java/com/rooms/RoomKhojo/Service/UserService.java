@@ -3,6 +3,7 @@ package com.rooms.RoomKhojo.Service;
 import com.rooms.RoomKhojo.Entity.Customer;
 import com.rooms.RoomKhojo.Entity.User;
 import com.rooms.RoomKhojo.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Optional;
 
 @Service
 public class UserService {
+    @Autowired
     private UserRepository userRepository;
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -34,7 +36,7 @@ public class UserService {
 
         User existingUser = optionalUser.get();
         existingUser.setName(userDetails.getName());
-        existingUser.setName(userDetails.getPhoneNo());
+        existingUser.setPhoneNo(userDetails.getPhoneNo());
 
         return userRepository.save(existingUser);
     }

@@ -1,13 +1,13 @@
 package com.rooms.RoomKhojo.Entity;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+    private long id;
     private String name;
     private String phoneNo;
 
@@ -45,7 +45,7 @@ public abstract class User {
 
     @Override
     public String toString() {
-        return "Owner{" +
+        return "User{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", phoneNo='" + phoneNo + '\'' +
