@@ -7,22 +7,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class ResidentialProperty extends Property{
+public class ResidentialProperty extends Property {
 
     private String roomSize;
+    private float price;
 
     @ElementCollection
     @CollectionTable(name = "property_facilities", joinColumns = @JoinColumn(name = "property_id"))
     @Column(name = "facility")
     List<String> facility = new ArrayList<>();
 
+    public ResidentialProperty() {}
 
-    public ResidentialProperty(){}
-
-
-    public ResidentialProperty(long id, Owner owner, ResidentialPropertyType residentialPropertyType, Location location, List<String> images, String roomSize, List<String> facility) {
+    public ResidentialProperty(long id, Owner owner, ResidentialPropertyType residentialPropertyType,
+                               Location location, List<String> images,
+                               String roomSize, float price, List<String> facility) {
         super(id, owner, residentialPropertyType, location, images);
         this.roomSize = roomSize;
+        this.price = price;
         this.facility = facility;
     }
 
@@ -32,6 +34,14 @@ public class ResidentialProperty extends Property{
 
     public void setRoomSize(String roomSize) {
         this.roomSize = roomSize;
+    }
+
+    public float getPrice() {
+        return price;
+    }
+
+    public void setPrice(float price) {
+        this.price = price;
     }
 
     public List<String> getFacilities() {
@@ -50,9 +60,9 @@ public class ResidentialProperty extends Property{
                 ", propertyType=" + getResidentialPropertyType() +
                 ", location=" + getLocation() +
                 ", roomSize='" + roomSize + '\'' +
+                ", price=" + price +
                 ", facilities=" + facility +
                 ", imagesCount=" + (getImages() != null ? getImages().size() : 0) +
                 '}';
     }
-
 }
