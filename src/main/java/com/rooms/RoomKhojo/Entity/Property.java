@@ -1,5 +1,4 @@
 package com.rooms.RoomKhojo.Entity;
-
 import com.rooms.RoomKhojo.Enum.ResidentialPropertyType;
 import jakarta.persistence.*;
 
@@ -140,15 +139,4 @@ public class Property {
                 '}';
     }
 
-
-//    @Override
-//    public String toString() {
-//        return "Property{" +
-//                "id=" + id +
-//                ", owner=" + owner +
-//                ", propertyType=" + residentialPropertyType +
-//                ", location='" + location + '\'' +
-//                ", images=" + images +
-//                '}';
-//    }
 }
