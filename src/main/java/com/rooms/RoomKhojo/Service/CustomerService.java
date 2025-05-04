@@ -33,6 +33,7 @@ public class CustomerService {
         existingCustomer.setName(customerDetails.getName());
         existingCustomer.setPhoneNo(customerDetails.getPhoneNo());
         existingCustomer.setEmail(customerDetails.getEmail());
+        existingCustomer.setGeneder(customerDetails.getGeneder());
 
         return customerRepository.save(existingCustomer);
     }

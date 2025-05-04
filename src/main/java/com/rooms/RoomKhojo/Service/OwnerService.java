@@ -82,6 +82,7 @@ public class OwnerService {
         existingOwner.setName(owner.getName());
         existingOwner.setEmail(owner.getEmail());
         existingOwner.setPhoneNo(owner.getPhoneNo());
+        existingOwner.setGender(owner.getGender());
         return ownerRepository.save(existingOwner);
     }
 

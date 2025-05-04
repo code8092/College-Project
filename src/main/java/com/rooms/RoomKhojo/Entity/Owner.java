@@ -19,6 +19,9 @@ public class Owner {
     @NotEmpty(message = "Name is required")
     private String name;
 
+    @NotEmpty(message = "Gender is required")
+    private String gender;
+
     @Pattern(
             regexp = "^(\\+\\d{1,3}[- ]?)?\\d{10}$",
             message = "Invalid phone number. It should be 10 digits or with country code."
@@ -33,10 +36,19 @@ public class Owner {
 
     public Owner() {}
 
-    public Owner(String name, String phoneNo, String email) {
+//    public Owner(String name, String phoneNo, String email) {
+//        this.name = name;
+//        this.phoneNo = phoneNo;
+//        this.email = email;
+//    }
+
+
+    public Owner(String name, String gender, String phoneNo, String email, List<ResidentialProperty> properties) {
         this.name = name;
+        this.gender = gender;
         this.phoneNo = phoneNo;
         this.email = email;
+        this.properties = properties;
     }
 
     public Long getId() {
@@ -53,6 +65,14 @@ public class Owner {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public String getPhoneNo() {

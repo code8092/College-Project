@@ -29,12 +29,17 @@ public class Customer {
     @NotEmpty(message = "email is required")
     private String email;
 
-    public Customer() {}
+    private String geneder;
 
-    public Customer(String name, String phoneNo, String email) {
+    public Customer() {
+    }
+
+
+    public Customer(String name, String phoneNo, String email, String geneder) {
         this.name = name;
         this.phoneNo = phoneNo;
         this.email = email;
+        this.geneder = geneder;
     }
 
     public Long getId() {
@@ -69,6 +74,15 @@ public class Customer {
         this.email = email;
     }
 
+    public String getGeneder() {
+        return geneder;
+    }
+
+    public void setGeneder(String geneder) {
+        this.geneder = geneder;
+    }
+
+
     @Override
     public String toString() {
         return "Customer{" +
@@ -76,6 +90,7 @@ public class Customer {
                 ", name='" + name + '\'' +
                 ", phoneNo='" + phoneNo + '\'' +
                 ", email='" + email + '\'' +
+                ", geneder='" + geneder + '\'' +
                 '}';
     }
 }
