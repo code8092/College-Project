@@ -2,6 +2,9 @@ package com.rooms.RoomKhojo.Controller;
 
 import com.rooms.RoomKhojo.Entity.Customer;
 import com.rooms.RoomKhojo.Service.CustomerService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,57 +14,49 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/customer")
+@Tag(name = "Customer API", description = "Operation related to Customer API.")
+@CrossOrigin
 public class CustomerController {
 
     @Autowired
     private CustomerService customerService;
 
     @GetMapping
-    public ResponseEntity<List<Customer>> getallCustomer(){
+    @Operation(summary = "Get all customers", description = "Returns all customers")
+    public ResponseEntity<List<Customer>> getAllCustomer() {
         List<Customer> customers = customerService.getAllCustomer();
-        try {
-            return new ResponseEntity<>(customers,HttpStatus.OK);
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
-
+        return ResponseEntity.ok(customers);
     }
 
     @GetMapping("/{id}")
-    public Customer getCustomerById(@PathVariable("id") long id) throws Exception {
-        try {
-            return customerService.getCustomerById(id);
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
-
+    @Operation(summary = "Get one customer", description = "Returns one customer by ID")
+    public ResponseEntity<Customer> getCustomerById(@PathVariable("id") long id) throws Exception {
+        Customer customer = customerService.getCustomerById(id);
+        return ResponseEntity.ok(customer);
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<Customer> saveCustomer(@RequestBody Customer customer){
-        Customer saveCustomer = customerService.saveCustomer(customer);
-        try {
-            return new ResponseEntity<>(saveCustomer,HttpStatus.CREATED);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e.getMessage());
-        }
+    @PostMapping
+    @Operation(summary = "Save a customer", description = "Saves a customer to the database.")
+    public ResponseEntity<Customer> saveCustomer(@Valid @RequestBody Customer customer) {
+        Customer savedCustomer = customerService.saveCustomer(customer);
+        return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable("id") long id,@RequestBody Customer customerDetails){
-        Customer updatedCustomer = customerService.updateCustomer(id,customerDetails);
-        if(updatedCustomer!=null){
-            return new ResponseEntity<>(updatedCustomer,HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @Operation(summary = "Update a customer", description = "Updates customer info like name, phone, email by ID")
+    public ResponseEntity<Customer> updateCustomer(
+            @PathVariable("id") long id,
+            @RequestBody Customer customerDetails) {
+        Customer updatedCustomer = customerService.updateCustomer(id, customerDetails);
+        return ResponseEntity.ok(updatedCustomer); // Let service throw if not found
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteCustomer(@PathVariable("id") long id){
+    @Operation(summary = "Delete a customer", description = "Deletes a customer using their ID")
+    public ResponseEntity<Void> deleteCustomer(@PathVariable("id") long id) {
         boolean isDeleted = customerService.deleteCustomer(id);
-        if(isDeleted){
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return isDeleted
+                ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

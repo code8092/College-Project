@@ -1,44 +1,90 @@
 package com.rooms.RoomKhojo.Entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class  Owner extends User{
+public class Owner {
+    @Schema(hidden = true)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotEmpty(message = "Name is required")
+    private String name;
+
+    @Pattern(
+            regexp = "^(\\+\\d{1,3}[- ]?)?\\d{10}$",
+            message = "Invalid phone number. It should be 10 digits or with country code."
+    )
+    private String phoneNo;
+
+    @Email(message = "enter valid email")
+    private String email;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Property> properties = new ArrayList<>();
+    private List<ResidentialProperty> properties = new ArrayList<>();
 
-    public Owner(){
-        super();
+    public Owner() {}
+
+    public Owner(String name, String phoneNo, String email) {
+        this.name = name;
+        this.phoneNo = phoneNo;
+        this.email = email;
     }
 
-    public Owner(long id, String name, String phoneNo, List<Property> properties) {
-        super(id, name, phoneNo);
-        this.properties = properties;
+    public Long getId() {
+        return id;
     }
 
-    public List<Property> getProperties() {
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPhoneNo() {
+        return phoneNo;
+    }
+
+    public void setPhoneNo(String phoneNo) {
+        this.phoneNo = phoneNo;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public List<ResidentialProperty> getProperties() {
         return properties;
     }
 
-    public void setProperties(List<Property> properties) {
+    public void setProperties(List<ResidentialProperty> properties) {
         this.properties = properties;
     }
 
-    //adding property
-    public void addProperty(Property property){
+    public void addProperty(ResidentialProperty property) {
         properties.add(property);
         property.setOwner(this);
     }
 
-    //removing property
-    public void removeProperty(Property property){
+    public void removeProperty(ResidentialProperty property) {
         properties.remove(property);
         property.setOwner(null);
     }
@@ -46,9 +92,10 @@ public class  Owner extends User{
     @Override
     public String toString() {
         return "Owner{" +
-                "id=" + getId() +
-                ", name='" + getName() + '\'' +
-                ", phoneNo='" + getPhoneNo() + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", phoneNo='" + phoneNo + '\'' +
+                ", email='" + email + '\'' +
                 ", propertiesCount=" + properties.size() +
                 '}';
     }

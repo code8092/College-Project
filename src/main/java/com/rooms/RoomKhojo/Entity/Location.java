@@ -1,5 +1,6 @@
 package com.rooms.RoomKhojo.Entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -7,6 +8,7 @@ import jakarta.persistence.Id;
 
 @Entity
 public class Location {
+    @Schema(hidden = true)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

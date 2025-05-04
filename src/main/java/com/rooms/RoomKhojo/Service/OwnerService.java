@@ -1,11 +1,11 @@
 package com.rooms.RoomKhojo.Service;
 
-import com.rooms.RoomKhojo.DTO.PropertyDTO;
+import com.rooms.RoomKhojo.DTO.ResidentialPropertyDTO;
 import com.rooms.RoomKhojo.Entity.Location;
 import com.rooms.RoomKhojo.Entity.Owner;
-import com.rooms.RoomKhojo.Entity.Property;
+import com.rooms.RoomKhojo.Entity.ResidentialProperty;
 import com.rooms.RoomKhojo.repository.OwnerRepository;
-import com.rooms.RoomKhojo.repository.PropertyRepository;
+import com.rooms.RoomKhojo.repository.ResidentialPropertyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,42 +18,90 @@ public class OwnerService {
     private OwnerRepository ownerRepository;
 
     @Autowired
-    private PropertyRepository propertyRepository;
+    private ResidentialPropertyRepository propertyRepository;
 
-    public Property addPropertyToOwner(Long ownerId, PropertyDTO dto) {
-        // Fetch the owner entity from the database
+    public ResidentialProperty addPropertyToOwner(Long ownerId, ResidentialPropertyDTO dto) {
         Owner owner = ownerRepository.findById(ownerId)
-                .orElseThrow(() -> new RuntimeException("Owner not found"));
+                .orElseThrow(() -> new RuntimeException("Owner not found with ID: " + ownerId));
 
-        // Create a Location object based on the input DTO
         Location location = new Location();
         location.setState(dto.getState());
         location.setCity(dto.getCity());
         location.setStreetAddress(dto.getStreetAddress());
+        location.setZipCode(dto.getZipCode());
 
-        // Create the Property object to be saved
-        Property property = new Property();
+        ResidentialProperty property = new ResidentialProperty();
         property.setOwner(owner);
         property.setResidentialPropertyType(dto.getResidentialPropertyType());
         property.setLocation(location);
         property.setImages(dto.getImages());
+        property.setRoomSize(dto.getRoomSize());
+        property.setPrice(dto.getPrice());
+        property.setFacility(dto.getFacilities());
 
-        // Save the property to the database
-        return propertyRepository.save(property);  // This returns a Property entity
+        return propertyRepository.save(property);
     }
 
-    public List<Property> getPropertiesByOwnerId(Long ownerId) {
+    public List<ResidentialProperty> getPropertiesByOwnerId(Long ownerId) {
         return propertyRepository.findByOwnerId(ownerId);
     }
 
     public void deletePropertyForOwner(Long ownerId, Long propertyId) {
-        Property property = propertyRepository.findById(propertyId)
-                .orElseThrow(() -> new RuntimeException("Property not found"));
+        ResidentialProperty property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new RuntimeException("Property not found with ID: " + propertyId));
 
         if (property.getOwner() != null) {
             property.getOwner().getId();
         }
-        throw new RuntimeException("Owner not authorized to delete this property");
+        else {
+            throw new RuntimeException("Owner not authorized to delete this property");
+        }
+        propertyRepository.delete(property);
+    }
 
+//    public Owner saveOwner(Owner owner) {
+//        return ownerRepository.save(owner);
+//    }
+
+    public Owner saveOwner(Owner owner) {
+        // Make sure all properties point back to this owner
+        if (owner.getProperties() != null) {
+            for (ResidentialProperty property : owner.getProperties()) {
+                property.setOwner(owner);
+            }
+        }
+        return ownerRepository.save(owner);
+    }
+
+
+
+    public Owner updateOwner(long ownerId, Owner owner) {
+        Owner existingOwner = ownerRepository.findById(ownerId).
+                orElseThrow(()-> new RuntimeException("Owner not found by Id"+ownerId));
+//        existingOwner.setProperties(owner.getProperties());
+        existingOwner.setName(owner.getName());
+        existingOwner.setEmail(owner.getEmail());
+        existingOwner.setPhoneNo(owner.getPhoneNo());
+        return ownerRepository.save(existingOwner);
+    }
+
+    public boolean deleteCustomer(long id) {
+        List<ResidentialProperty> properties = propertyRepository.findByOwnerId(id);
+
+        if(!properties.isEmpty()){
+            propertyRepository.deleteAll(properties);
+            System.out.println("Owner properties deleted successfully..");
+        }
+
+        if(ownerRepository.existsById(id)){
+            ownerRepository.deleteById(id);
+            System.out.println("owner deleted successfully");
+            return true;
+        }
+        return false;
+    }
+
+    public List<Owner> getAllOwner() {
+        return ownerRepository.findAll();
     }
 }
