@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OwnerService {
@@ -104,5 +105,9 @@ public class OwnerService {
 
     public List<Owner> getAllOwner() {
         return ownerRepository.findAll();
+    }
+
+    public Optional<Owner> getOne(Long id) {
+        return ownerRepository.findById(id);
     }
 }

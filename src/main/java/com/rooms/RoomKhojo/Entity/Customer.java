@@ -20,15 +20,17 @@ public class Customer {
     private String name;
 
     @Pattern(
-            regexp = "^(\\+\\d{1,3}[- ]?)?\\d{10}$",
-            message = "Invalid phone number. It should be 10 digits or with country code."
+            regexp = "^(\\+91|91|0)?[6-9]\\d{9}$",
+            message = "Invalid Indian phone number. Must be 10 digits starting with 6-9, with optional +91 or 0."
     )
+
     private String phoneNo;
 
     @Email(message = "email is not valid")
     @NotEmpty(message = "email is required")
     private String email;
 
+    @NotEmpty(message = "Please enter gender")
     private String geneder;
 
     public Customer() {

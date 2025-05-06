@@ -80,13 +80,21 @@ public class ResidentialPropertyController {
         return ResponseEntity.ok(imagePaths);
     }
 
-    @GetMapping("/search")
-    @Operation(summary = "Search by location", description = "Search property by state or city or both")
-    public ResponseEntity<List<ResidentialProperty>> searchPropertiesByLocation(
-            @RequestParam(required = false) String state,
-            @RequestParam(required = false) String city) {
+//    @GetMapping("/search")
+//    @Operation(summary = "Search by location", description = "Search property by state or city or both")
+//    public ResponseEntity<List<ResidentialProperty>> searchPropertiesByLocation(
+//            @RequestParam(required = false) String state,
+//            @RequestParam(required = false) String city) {
+//
+//        List<ResidentialProperty> properties = propertyService.searchPropertiesByLocation(state, city);
+//        return ResponseEntity.ok(properties);
+//    }
+@GetMapping("/search")
+@Operation(summary = "Global Search", description = "Search properties using keywords across owner and property fields")
+public ResponseEntity<List<ResidentialProperty>> globalSearch(@RequestParam("q") String query) {
+    List<ResidentialProperty> results = propertyService.globalSearch(query);
+    return ResponseEntity.ok(results);
+}
 
-        List<ResidentialProperty> properties = propertyService.searchPropertiesByLocation(state, city);
-        return ResponseEntity.ok(properties);
-    }
+
 }

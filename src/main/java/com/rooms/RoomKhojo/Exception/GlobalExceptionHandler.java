@@ -11,7 +11,7 @@
 //import java.util.Map;
 //
 //@ControllerAdvice
-//public class GlobalExceptionHandler {
+//public class GlobalExceptionHandler extends Throwable {
 //
 //    @ExceptionHandler(MethodArgumentNotValidException.class)
 //    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {

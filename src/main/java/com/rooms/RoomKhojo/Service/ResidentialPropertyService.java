@@ -16,6 +16,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ResidentialPropertyService {
@@ -89,9 +90,56 @@ public class ResidentialPropertyService {
         return property.getImages();
     }
 
-    public List<ResidentialProperty> searchPropertiesByLocation(String state, String city) {
-        return residentialPropertyRepository.searchByLocation(state, city);
-    }
+//    public List<ResidentialProperty> searchPropertiesByLocation(String state, String city) {
+//        return residentialPropertyRepository.searchByLocation(state, city);
+//    }
+public List<ResidentialProperty> globalSearch(String query) {
+    String[] keywords = query.toLowerCase().trim().split("\\s+");
+    List<ResidentialProperty> allProperties = residentialPropertyRepository.findAll();
+
+    return allProperties.stream()
+            .filter(property -> {
+                StringBuilder combined = new StringBuilder();
+
+                // Owner Info
+                if (property.getOwner() != null) {
+                    combined.append(property.getOwner().getName()).append(" ")
+                            .append(property.getOwner().getEmail()).append(" ")
+                            .append(property.getOwner().getPhoneNo()).append(" ");
+                }
+
+                // Location Info
+                if (property.getLocation() != null) {
+                    combined.append(property.getLocation().getCity()).append(" ")
+                            .append(property.getLocation().getState()).append(" ");
+                }
+
+                // Property Info
+                combined.append(property.getRoomSize()).append(" ")
+                        .append(property.getResidentialPropertyType()).append(" ")
+                        .append(property.getPropertyStatus()).append(" ")
+                        .append(property.getPrice()).append(" ");
+                ;
+
+                // Facilities
+                if (property.getFacility() != null) {
+                    combined.append(String.join(" ", property.getFacility()));
+                }
+
+                String searchable = combined.toString().toLowerCase();
+
+                // Match all keywords
+                for (String keyword : keywords) {
+                    if (!searchable.contains(keyword)) {
+                        return false;
+                    }
+                }
+                return true;
+            })
+            .collect(Collectors.toList());
+}
+
+
 
     public ResidentialProperty updateProperty(long id, ResidentialProperty residentialProperty) {
         ResidentialProperty existingProperty = residentialPropertyRepository.findById(id)

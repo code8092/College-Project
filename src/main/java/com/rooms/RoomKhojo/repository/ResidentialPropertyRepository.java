@@ -10,10 +10,17 @@ import java.util.List;
 public interface ResidentialPropertyRepository extends JpaRepository<ResidentialProperty, Long> {
     // Custom query to search by Location fields (State, City, Zip Code)
     // Custom query to search by Location fields (State and City)
-    @Query("SELECT p FROM ResidentialProperty p WHERE " +
-            "(:state IS NULL OR p.location.state LIKE %:state%) AND " +
-            "(:city IS NULL OR p.location.city LIKE %:city%)")
-    List<ResidentialProperty> searchByLocation(String state, String city);
+//    @Query("SELECT p FROM ResidentialProperty p WHERE " +
+//            "(:state IS NULL OR p.location.state LIKE %:state%) AND " +
+//            "(:city IS NULL OR p.location.city LIKE %:city%)")
+//    List<ResidentialProperty> searchByLocation(String state, String city);
+    @Query("SELECT p FROM ResidentialProperty p " +
+            "WHERE " +
+            "(:keyword IS NULL OR " +
+            "(LOWER(p.location.state) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(p.location.city) LIKE LOWER(CONCAT('%', :keyword, '%'))))")
+    List<ResidentialProperty> searchByKeyword(String keyword);
+
 
 
     List<ResidentialProperty> findByOwnerId(Long ownerId);

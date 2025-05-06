@@ -8,11 +8,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/Owner")
@@ -55,6 +57,13 @@ public class OwnerController {
         return owners.isEmpty() ?
                 ResponseEntity.noContent().build() :
                 ResponseEntity.ok(owners);
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Get one customer by his id", description = "Returns one customer")
+    public HttpEntity<Optional<Owner>> getOne(@PathVariable("id") Long id){
+        Optional<Owner> owner = ownerService.getOne(id);
+        return new ResponseEntity<>(owner,HttpStatus.OK);
     }
 
     @PutMapping("/update/{id}")
