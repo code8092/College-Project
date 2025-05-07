@@ -8,6 +8,8 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.UniqueElements;
 
 @Entity
 public class Customer {
@@ -18,6 +20,13 @@ public class Customer {
 
     @NotEmpty(message = "Name is required")
     private String name;
+
+    @NotEmpty(message = "password is required")
+    @Size(min = 8, message = "Password must be at least 8 characters long")
+    private String password;
+
+    @NotEmpty(message = "User name is required")
+    private String username;
 
     @Pattern(
             regexp = "^(\\+91|91|0)?[6-9]\\d{9}$",
@@ -31,17 +40,18 @@ public class Customer {
     private String email;
 
     @NotEmpty(message = "Please enter gender")
-    private String geneder;
+    private String gender;
 
     public Customer() {
     }
 
-
-    public Customer(String name, String phoneNo, String email, String geneder) {
+    public Customer(String name, String password, String username, String phoneNo, String email, String gender) {
         this.name = name;
+        this.password = password;
+        this.username = username;
         this.phoneNo = phoneNo;
         this.email = email;
-        this.geneder = geneder;
+        this.gender = gender;
     }
 
     public Long getId() {
@@ -77,22 +87,39 @@ public class Customer {
     }
 
     public String getGeneder() {
-        return geneder;
+        return gender;
     }
 
     public void setGeneder(String geneder) {
-        this.geneder = geneder;
+        this.gender = geneder;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     @Override
     public String toString() {
         return "Customer{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", username='" + username + '\'' +
                 ", phoneNo='" + phoneNo + '\'' +
                 ", email='" + email + '\'' +
-                ", geneder='" + geneder + '\'' +
+                ", gender='" + gender + '\'' +
                 '}';
     }
+
 }

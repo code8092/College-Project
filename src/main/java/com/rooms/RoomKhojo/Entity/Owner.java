@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,13 @@ public class Owner {
     @NotEmpty(message = "Gender is required")
     private String gender;
 
+    @NotEmpty(message = "password is required")
+    @Size(min = 8, message = "Password must be at least 8 characters long")
+    private String password;
+
+    @NotEmpty(message = "User name is required")
+    private String username;
+
     @Pattern(
             regexp = "^(\\+\\d{1,3}[- ]?)?\\d{10}$",
             message = "Invalid phone number. It should be 10 digits or with country code."
@@ -36,16 +44,20 @@ public class Owner {
 
     public Owner() {}
 
-//    public Owner(String name, String phoneNo, String email) {
-//        this.name = name;
-//        this.phoneNo = phoneNo;
-//        this.email = email;
-//    }
-
 
     public Owner(String name, String gender, String phoneNo, String email, List<ResidentialProperty> properties) {
         this.name = name;
         this.gender = gender;
+        this.phoneNo = phoneNo;
+        this.email = email;
+        this.properties = properties;
+    }
+
+    public Owner(String name, String gender, String password, String username, String phoneNo, String email, List<ResidentialProperty> properties) {
+        this.name = name;
+        this.gender = gender;
+        this.password = password;
+        this.username = username;
         this.phoneNo = phoneNo;
         this.email = email;
         this.properties = properties;
@@ -109,14 +121,32 @@ public class Owner {
         property.setOwner(null);
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     @Override
     public String toString() {
         return "Owner{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", gender='" + gender + '\'' +
+                ", username='" + username + '\'' +
                 ", phoneNo='" + phoneNo + '\'' +
                 ", email='" + email + '\'' +
-                ", propertiesCount=" + properties.size() +
+                ", properties=" + properties +
                 '}';
     }
 }
