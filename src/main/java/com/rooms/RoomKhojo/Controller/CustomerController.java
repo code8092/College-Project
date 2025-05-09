@@ -28,6 +28,7 @@ public class CustomerController {
         return ResponseEntity.ok(customers);
     }
 
+    @CrossOrigin
     @GetMapping("/{id}")
     @Operation(summary = "Get one customer", description = "Returns one customer by ID")
     public ResponseEntity<Customer> getCustomerById(@PathVariable("id") long id) throws Exception {
@@ -35,6 +36,7 @@ public class CustomerController {
         return ResponseEntity.ok(customer);
     }
 
+    @CrossOrigin
     @PostMapping
     @Operation(summary = "Save a customer", description = "Saves a customer to the database.")
     public ResponseEntity<Customer> saveCustomer(@Valid @RequestBody Customer customer) {
@@ -42,15 +44,17 @@ public class CustomerController {
         return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
     }
 
+    @CrossOrigin
     @PutMapping("/update/{id}")
     @Operation(summary = "Update a customer", description = "Updates customer info like name, phone, email by ID")
     public ResponseEntity<Customer> updateCustomer(
             @PathVariable("id") long id,
             @RequestBody Customer customerDetails) {
         Customer updatedCustomer = customerService.updateCustomer(id, customerDetails);
-        return ResponseEntity.ok(updatedCustomer); // Let service throw if not found
+        return ResponseEntity.ok(updatedCustomer);
     }
 
+    @CrossOrigin
     @DeleteMapping("/delete/{id}")
     @Operation(summary = "Delete a customer", description = "Deletes a customer using their ID")
     public ResponseEntity<Void> deleteCustomer(@PathVariable("id") long id) {

@@ -25,6 +25,7 @@ public class OwnerController {
     @Autowired
     private OwnerService ownerService;
 
+    @CrossOrigin
     @PostMapping("/save")
     @Operation(summary = "Save an owner", description = "This method saves an owner")
     public ResponseEntity<Owner> saveOwner(@Valid @RequestBody Owner owner) {
@@ -32,6 +33,7 @@ public class OwnerController {
         return new ResponseEntity<>(savedOwner, HttpStatus.CREATED);
     }
 
+    @CrossOrigin
     @PostMapping("/{id}/properties")
     @Operation(summary = "Add property to owner", description = "This adds a property to an owner by ID")
     public ResponseEntity<String> addPropertyToOwner(
@@ -41,6 +43,7 @@ public class OwnerController {
         return ResponseEntity.ok("Property added successfully for Owner ID " + ownerId + ", Property ID " + savedProperty.getId());
     }
 
+    @CrossOrigin
     @GetMapping("/{id}/properties")
     @Operation(summary = "Get properties by owner ID", description = "Owner retrieves their properties by ID")
     public ResponseEntity<List<ResidentialProperty>> getPropertiesByOwner(@PathVariable("id") Long ownerId) {
@@ -49,6 +52,7 @@ public class OwnerController {
                 ResponseEntity.noContent().build() :
                 ResponseEntity.ok(properties);
     }
+
 
     @GetMapping
     @Operation(summary = "Get all owners", description = "Returns all owners")
@@ -59,6 +63,7 @@ public class OwnerController {
                 ResponseEntity.ok(owners);
     }
 
+
     @GetMapping("/{id}")
     @Operation(summary = "Get one customer by his id", description = "Returns one customer")
     public HttpEntity<Optional<Owner>> getOne(@PathVariable("id") Long id){
@@ -66,6 +71,8 @@ public class OwnerController {
         return new ResponseEntity<>(owner,HttpStatus.OK);
     }
 
+
+    @CrossOrigin
     @PutMapping("/update/{id}")
     @Operation(summary = "Update owner", description = "Owner updates name, phone, or email")
     public ResponseEntity<Owner> updateOwner(
@@ -75,6 +82,7 @@ public class OwnerController {
         return ResponseEntity.ok(updatedOwner); // Let service throw if not found
     }
 
+    @CrossOrigin
     @DeleteMapping("/{ownerId}/properties/{propertyId}")
     @Operation(summary = "Delete property", description = "Owner deletes property by their ID and property ID")
     public ResponseEntity<String> deletePropertyForOwner(
@@ -84,6 +92,7 @@ public class OwnerController {
         return ResponseEntity.ok("Property deleted successfully.");
     }
 
+    @CrossOrigin
     @DeleteMapping("/delete/{id}")
     @Operation(summary = "Delete owner", description = "Deletes owner and all associated properties")
     public ResponseEntity<Void> deleteCustomer(@PathVariable("id") long id) {

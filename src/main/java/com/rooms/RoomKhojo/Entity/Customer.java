@@ -9,7 +9,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import org.hibernate.validator.constraints.UniqueElements;
 
 @Entity
 public class Customer {
@@ -25,8 +24,6 @@ public class Customer {
     @Size(min = 8, message = "Password must be at least 8 characters long")
     private String password;
 
-    @NotEmpty(message = "User name is required")
-    private String username;
 
     @Pattern(
             regexp = "^(\\+91|91|0)?[6-9]\\d{9}$",
@@ -45,10 +42,9 @@ public class Customer {
     public Customer() {
     }
 
-    public Customer(String name, String password, String username, String phoneNo, String email, String gender) {
+    public Customer(String name, String password, String phoneNo, String email, String gender) {
         this.name = name;
         this.password = password;
-        this.username = username;
         this.phoneNo = phoneNo;
         this.email = email;
         this.gender = gender;
@@ -102,20 +98,11 @@ public class Customer {
         this.password = password;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     @Override
     public String toString() {
         return "Customer{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", username='" + username + '\'' +
                 ", phoneNo='" + phoneNo + '\'' +
                 ", email='" + email + '\'' +
                 ", gender='" + gender + '\'' +

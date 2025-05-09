@@ -74,8 +74,6 @@ public class OwnerService {
         return ownerRepository.save(owner);
     }
 
-
-
     public Owner updateOwner(long ownerId, Owner owner) {
         Owner existingOwner = ownerRepository.findById(ownerId).
                 orElseThrow(()-> new RuntimeException("Owner not found by Id"+ownerId));
@@ -84,7 +82,6 @@ public class OwnerService {
         existingOwner.setEmail(owner.getEmail());
         existingOwner.setPhoneNo(owner.getPhoneNo());
         existingOwner.setGender(owner.getGender());
-        existingOwner.setUsername(owner.getUsername());
         existingOwner.setPassword(owner.getPassword());
         return ownerRepository.save(existingOwner);
     }

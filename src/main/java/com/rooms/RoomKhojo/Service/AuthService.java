@@ -1,5 +1,6 @@
 package com.rooms.RoomKhojo.Service;
 
+import com.rooms.RoomKhojo.DTO.LoginRequest;
 import com.rooms.RoomKhojo.repository.CustomerRepository;
 import com.rooms.RoomKhojo.repository.OwnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,17 +15,26 @@ public class AuthService {
     @Autowired
     private OwnerRepository ownerRepository;
 
-    public String loginCustomer(String username, String password) {
-        return customerRepository.findByUsername(username)
-                .filter(customer -> customer.getPassword().equals(password)) // Replace with password encoder check in production
-                .map(customer -> "Login successful for Customer: " + customer.getName())
-                .orElse("Invalid username or password for Customer");
-    }
+    public String login(LoginRequest request) {
+        String email = request.getEmail();
+        String password = request.getPassword();
 
-    public String loginOwner(String username, String password) {
-        return ownerRepository.findByUsername(username)
-                .filter(owner -> owner.getPassword().equals(password)) // Replace with password encoder check in production
-                .map(owner -> "Login successful for Owner: " + owner.getName())
-                .orElse("Invalid username or password for Owner");
+        // for customer login
+        var customerResult = customerRepository.findByEmail(email)
+                .filter(customer -> customer.getPassword().equals(password));
+
+        if (customerResult.isPresent()) {
+            return "Login successful for Customer: " + customerResult.get().getName();
+        }
+
+        // for owner login
+        var ownerResult = ownerRepository.findByEmail(email)
+                .filter(owner -> owner.getPassword().equals(password));
+
+        if (ownerResult.isPresent()) {
+            return "Login successful for Owner: " + ownerResult.get().getName();
+        }
+
+        return "Invalid email or password";
     }
 }

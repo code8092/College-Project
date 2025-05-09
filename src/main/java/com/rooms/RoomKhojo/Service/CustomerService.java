@@ -26,7 +26,6 @@ public class CustomerService {
     }
 
     public Customer updateCustomer(long id, Customer customerDetails) {
-        // Throw CustomerNotFoundException instead of RuntimeException
         Customer existingCustomer = customerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Customer not found for "+id));
 
@@ -34,7 +33,6 @@ public class CustomerService {
         existingCustomer.setPhoneNo(customerDetails.getPhoneNo());
         existingCustomer.setEmail(customerDetails.getEmail());
         existingCustomer.setGeneder(customerDetails.getGeneder());
-        existingCustomer.setUsername(customerDetails.getUsername());
         existingCustomer.setPassword(customerDetails.getPassword());
 
         return customerRepository.save(existingCustomer);

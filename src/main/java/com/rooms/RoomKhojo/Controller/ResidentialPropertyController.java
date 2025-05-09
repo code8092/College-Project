@@ -24,6 +24,7 @@ public class ResidentialPropertyController {
     @Autowired
     private ResidentialPropertyService propertyService;
 
+    @CrossOrigin
     @GetMapping
     @Operation(summary = "Get all properties", description = "Return all properties")
     public ResponseEntity<List<ResidentialProperty>> getAllProperties() {
@@ -31,6 +32,7 @@ public class ResidentialPropertyController {
         return ResponseEntity.ok(properties);
     }
 
+    @CrossOrigin
     @GetMapping("/{id}")
     @Operation(summary = "Get one property", description = "Return one property by ID")
     public ResponseEntity<ResidentialProperty> getPropertyById(@PathVariable Long id) {
@@ -38,12 +40,14 @@ public class ResidentialPropertyController {
         return ResponseEntity.ok(property);
     }
 
+    @CrossOrigin
     @PutMapping("/{propertyId}/status")
     public ResponseEntity<?> updateStatus(@PathVariable Long propertyId, @RequestParam PropertyStatus status) {
         propertyService.updateStatus(propertyId, status);
         return ResponseEntity.ok("Property status updated to " + status);
     }
 
+    @CrossOrigin
     @PostMapping(path = "/{id}/upload-images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Upload images", description = "Upload multiple images for a property by its ID")
     @ApiResponses(value = {
@@ -51,6 +55,7 @@ public class ResidentialPropertyController {
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
+
     public ResponseEntity<?> uploadImages(
             @PathVariable Long id,
             @RequestPart("images") List<MultipartFile> imageFiles) {
@@ -64,13 +69,14 @@ public class ResidentialPropertyController {
         }
     }
 
+    @CrossOrigin
     @PutMapping("/update/{id}")
     @Operation(summary = "Update a property", description = "Update property information")
     public ResponseEntity<ResidentialProperty> updateProperty(
             @PathVariable("id") long id, @RequestBody ResidentialProperty residentialProperty) {
 
         ResidentialProperty updatedProperty = propertyService.updateProperty(id, residentialProperty);
-        return ResponseEntity.ok(updatedProperty); // If not found, throw and handle globally
+        return ResponseEntity.ok(updatedProperty);
     }
 
     @GetMapping("/{id}/images")
@@ -80,21 +86,11 @@ public class ResidentialPropertyController {
         return ResponseEntity.ok(imagePaths);
     }
 
-//    @GetMapping("/search")
-//    @Operation(summary = "Search by location", description = "Search property by state or city or both")
-//    public ResponseEntity<List<ResidentialProperty>> searchPropertiesByLocation(
-//            @RequestParam(required = false) String state,
-//            @RequestParam(required = false) String city) {
-//
-//        List<ResidentialProperty> properties = propertyService.searchPropertiesByLocation(state, city);
-//        return ResponseEntity.ok(properties);
-//    }
-@GetMapping("/search")
-@Operation(summary = "Global Search", description = "Search properties using keywords across owner and property fields")
-public ResponseEntity<List<ResidentialProperty>> globalSearch(@RequestParam("q") String query) {
-    List<ResidentialProperty> results = propertyService.globalSearch(query);
-    return ResponseEntity.ok(results);
-}
-
-
+    @CrossOrigin
+    @GetMapping("/search")
+    @Operation(summary = "Global Search", description = "Search properties using keywords across owner and property fields")
+    public ResponseEntity<List<ResidentialProperty>> globalSearch(@RequestParam("q") String query) {
+        List<ResidentialProperty> results = propertyService.globalSearch(query);
+        return ResponseEntity.ok(results);
+    }
 }
