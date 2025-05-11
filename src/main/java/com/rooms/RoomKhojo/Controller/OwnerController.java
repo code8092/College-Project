@@ -26,15 +26,15 @@ public class OwnerController {
     private OwnerService ownerService;
 
     @CrossOrigin
-    @PostMapping("/save")
-    @Operation(summary = "Save an owner", description = "This method saves an owner")
+    @PostMapping
+    @Operation(summary = "Create an owner", description = "This method create an owner")
     public ResponseEntity<Owner> saveOwner(@Valid @RequestBody Owner owner) {
         Owner savedOwner = ownerService.saveOwner(owner);
         return new ResponseEntity<>(savedOwner, HttpStatus.CREATED);
     }
 
     @CrossOrigin
-    @PostMapping("/{id}/properties")
+    @PostMapping("/{id}")
     @Operation(summary = "Add property to owner", description = "This adds a property to an owner by ID")
     public ResponseEntity<String> addPropertyToOwner(
             @PathVariable("id") Long ownerId,
@@ -65,7 +65,7 @@ public class OwnerController {
 
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get one customer by his id", description = "Returns one customer")
+    @Operation(summary = "Get one owner by his id", description = "Returns one owner")
     public HttpEntity<Optional<Owner>> getOne(@PathVariable("id") Long id){
         Optional<Owner> owner = ownerService.getOne(id);
         return new ResponseEntity<>(owner,HttpStatus.OK);
@@ -73,7 +73,7 @@ public class OwnerController {
 
 
     @CrossOrigin
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     @Operation(summary = "Update owner", description = "Owner updates name, phone, or email")
     public ResponseEntity<Owner> updateOwner(
             @PathVariable("id") long ownerId,
@@ -93,10 +93,10 @@ public class OwnerController {
     }
 
     @CrossOrigin
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     @Operation(summary = "Delete owner", description = "Deletes owner and all associated properties")
-    public ResponseEntity<Void> deleteCustomer(@PathVariable("id") long id) {
-        boolean isDeleted = ownerService.deleteCustomer(id);
+    public ResponseEntity<Void> deleteOwner(@PathVariable("id") long id) {
+        boolean isDeleted = ownerService.deleteOwner(id);
         return isDeleted ?
                 new ResponseEntity<>(HttpStatus.NO_CONTENT) :
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);

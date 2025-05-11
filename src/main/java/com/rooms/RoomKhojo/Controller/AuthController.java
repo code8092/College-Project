@@ -6,14 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/login")
 @CrossOrigin
 public class AuthController {
 
     @Autowired
     private AuthService authService;
 
-    @PostMapping("/login")
+    @PostMapping
     public String login(@RequestBody LoginRequest loginRequest) {
         return authService.login(loginRequest);
     }

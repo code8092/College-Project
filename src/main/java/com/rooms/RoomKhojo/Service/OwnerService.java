@@ -60,24 +60,13 @@ public class OwnerService {
         propertyRepository.delete(property);
     }
 
-//    public Owner saveOwner(Owner owner) {
-//        return ownerRepository.save(owner);
-//    }
-
     public Owner saveOwner(Owner owner) {
-        // Make sure all properties point back to this owner
-        if (owner.getProperties() != null) {
-            for (ResidentialProperty property : owner.getProperties()) {
-                property.setOwner(owner);
-            }
-        }
         return ownerRepository.save(owner);
     }
 
     public Owner updateOwner(long ownerId, Owner owner) {
         Owner existingOwner = ownerRepository.findById(ownerId).
                 orElseThrow(()-> new RuntimeException("Owner not found by Id"+ownerId));
-//        existingOwner.setProperties(owner.getProperties());
         existingOwner.setName(owner.getName());
         existingOwner.setEmail(owner.getEmail());
         existingOwner.setPhoneNo(owner.getPhoneNo());
@@ -86,7 +75,7 @@ public class OwnerService {
         return ownerRepository.save(existingOwner);
     }
 
-    public boolean deleteCustomer(long id) {
+    public boolean deleteOwner(long id) {
         List<ResidentialProperty> properties = propertyRepository.findByOwnerId(id);
 
         if(!properties.isEmpty()){

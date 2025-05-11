@@ -42,13 +42,12 @@ public class Owner {
     public Owner() {}
 
 
-    public Owner(String name, String gender, String password, String phoneNo, String email, List<ResidentialProperty> properties) {
+    public Owner(String name, String gender, String password, String phoneNo, String email) {
         this.name = name;
         this.gender = gender;
         this.password = password;
         this.phoneNo = phoneNo;
         this.email = email;
-        this.properties = properties;
     }
 
     public Long getId() {
@@ -91,13 +90,13 @@ public class Owner {
         this.email = email;
     }
 
-    public List<ResidentialProperty> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(List<ResidentialProperty> properties) {
-        this.properties = properties;
-    }
+//    public List<ResidentialProperty> getProperties() {
+//        return properties;
+//    }
+//
+//    public void setProperties(List<ResidentialProperty> properties) {
+//        this.properties = properties;
+//    }
 
     public void addProperty(ResidentialProperty property) {
         properties.add(property);
@@ -125,7 +124,7 @@ public class Owner {
                 ", gender='" + gender + '\'' +
                 ", phoneNo='" + phoneNo + '\'' +
                 ", email='" + email + '\'' +
-                ", properties=" + properties +
+//                ", properties=" + properties +
                 '}';
     }
 }

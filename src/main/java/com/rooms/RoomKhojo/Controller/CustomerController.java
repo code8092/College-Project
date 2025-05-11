@@ -38,14 +38,14 @@ public class CustomerController {
 
     @CrossOrigin
     @PostMapping
-    @Operation(summary = "Save a customer", description = "Saves a customer to the database.")
+    @Operation(summary = "Create a customer", description = "Create a customer to the database.")
     public ResponseEntity<Customer> saveCustomer(@Valid @RequestBody Customer customer) {
         Customer savedCustomer = customerService.saveCustomer(customer);
         return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
     }
 
     @CrossOrigin
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     @Operation(summary = "Update a customer", description = "Updates customer info like name, phone, email by ID")
     public ResponseEntity<Customer> updateCustomer(
             @PathVariable("id") long id,
@@ -55,7 +55,7 @@ public class CustomerController {
     }
 
     @CrossOrigin
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     @Operation(summary = "Delete a customer", description = "Deletes a customer using their ID")
     public ResponseEntity<Void> deleteCustomer(@PathVariable("id") long id) {
         boolean isDeleted = customerService.deleteCustomer(id);
