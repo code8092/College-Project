@@ -1,16 +1,14 @@
 package com.rooms.RoomKhojo.Entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @Entity
+@Table(name = "Customer")
 public class Customer {
     @Schema(hidden = true)
     @Id
@@ -104,7 +102,6 @@ public class Customer {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", phoneNo='" + phoneNo + '\'' +
-                ", email='" + email + '\'' +
                 ", gender='" + gender + '\'' +
                 '}';
     }

@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +25,8 @@ public class ResidentialPropertyController {
     @Autowired
     private ResidentialPropertyService propertyService;
 
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'OWNER')") // ✅ Correct
+
     @CrossOrigin
     @GetMapping
     @Operation(summary = "Get all properties", description = "Return all properties")
@@ -34,12 +37,14 @@ public class ResidentialPropertyController {
 
     @CrossOrigin
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('OWNER','CUSTOMER')")
     @Operation(summary = "Get one property", description = "Return one property by ID")
     public ResponseEntity<ResidentialProperty> getPropertyById(@PathVariable Long id) {
         ResidentialProperty property = propertyService.getById(id);
         return ResponseEntity.ok(property);
     }
 
+    @PreAuthorize("hasRole('OWNER')")
     @CrossOrigin
     @PutMapping("/{propertyId}/status")
     public ResponseEntity<?> updateStatus(@PathVariable Long propertyId, @RequestParam PropertyStatus status) {
@@ -47,6 +52,7 @@ public class ResidentialPropertyController {
         return ResponseEntity.ok("Property status updated to " + status);
     }
 
+    @PreAuthorize("hasRole('OWNER')")
     @CrossOrigin
     @PostMapping(path = "/{id}/upload-images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Upload images", description = "Upload multiple images for a property by its ID")
@@ -69,6 +75,7 @@ public class ResidentialPropertyController {
         }
     }
 
+    @PreAuthorize("hasRole('OWNER')")
     @CrossOrigin
     @PutMapping("/update/{id}")
     @Operation(summary = "Update a property", description = "Update property information")
@@ -86,6 +93,7 @@ public class ResidentialPropertyController {
         return ResponseEntity.ok(imagePaths);
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @CrossOrigin
     @GetMapping("/search")
     @Operation(summary = "Global Search", description = "Search properties using keywords across owner and property fields")

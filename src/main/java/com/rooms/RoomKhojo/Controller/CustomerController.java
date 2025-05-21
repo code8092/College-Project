@@ -8,10 +8,12 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+//@PreAuthorize("hasRole('CUSTOMER')")
 @RestController
 @RequestMapping("/customer")
 @Tag(name = "Customer API", description = "Operation related to Customer API.")
@@ -44,6 +46,7 @@ public class CustomerController {
         return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @CrossOrigin
     @PutMapping("/{id}")
     @Operation(summary = "Update a customer", description = "Updates customer info like name, phone, email by ID")
@@ -54,6 +57,7 @@ public class CustomerController {
         return ResponseEntity.ok(updatedCustomer);
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @CrossOrigin
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a customer", description = "Deletes a customer using their ID")

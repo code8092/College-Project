@@ -3,6 +3,7 @@ package com.rooms.RoomKhojo.Controller;
 import com.rooms.RoomKhojo.DTO.LoginRequest;
 import com.rooms.RoomKhojo.Service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,7 +15,18 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping
-    public String login(@RequestBody LoginRequest loginRequest) {
-        return authService.login(loginRequest);
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+        String token = authService.login(loginRequest);
+        return ResponseEntity.ok("Login successful. Token: " + token);
+    }
+
+    @RestController
+    @RequestMapping("/secure")
+    public class SecureController {
+
+        @GetMapping
+        public String secureEndpoint() {
+            return "You have accessed a secured endpoint!";
+        }
     }
 }

@@ -34,6 +34,7 @@ public class Owner {
     private String phoneNo;
 
     @Email(message = "enter valid email")
+    @NotEmpty
     private String email;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -90,13 +91,6 @@ public class Owner {
         this.email = email;
     }
 
-//    public List<ResidentialProperty> getProperties() {
-//        return properties;
-//    }
-//
-//    public void setProperties(List<ResidentialProperty> properties) {
-//        this.properties = properties;
-//    }
 
     public void addProperty(ResidentialProperty property) {
         properties.add(property);
@@ -123,8 +117,6 @@ public class Owner {
                 ", name='" + name + '\'' +
                 ", gender='" + gender + '\'' +
                 ", phoneNo='" + phoneNo + '\'' +
-                ", email='" + email + '\'' +
-//                ", properties=" + properties +
                 '}';
     }
 }
