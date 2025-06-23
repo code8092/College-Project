@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/login")
 @CrossOrigin
@@ -15,10 +18,14 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest loginRequest) {
         String token = authService.login(loginRequest);
-        return ResponseEntity.ok("Login successful. Token: " + token);
+        Map<String, String> response = new HashMap<>();
+        response.put("Message", "Login successful");
+        response.put("Token", token);
+        return ResponseEntity.ok(response);
     }
+
 
     @RestController
     @RequestMapping("/secure")
