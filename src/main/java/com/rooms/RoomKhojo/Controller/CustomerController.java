@@ -24,6 +24,7 @@ public class CustomerController {
     private CustomerService customerService;
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Get all customers", description = "Returns all customers")
     public ResponseEntity<List<Customer>> getAllCustomer() {
         List<Customer> customers = customerService.getAllCustomer();
@@ -32,6 +33,7 @@ public class CustomerController {
 
     @CrossOrigin
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Get one customer", description = "Returns one customer by ID")
     public ResponseEntity<Customer> getCustomerById(@PathVariable("id") long id) throws Exception {
         Customer customer = customerService.getCustomerById(id);
@@ -57,7 +59,7 @@ public class CustomerController {
         return ResponseEntity.ok(updatedCustomer);
     }
 
-    @PreAuthorize("hasRole('CUSTOMER')")
+    @PreAuthorize("hasAnyRole('CUSTOMER','ADMIN')")
     @CrossOrigin
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a customer", description = "Deletes a customer using their ID")

@@ -25,7 +25,7 @@ public class ResidentialPropertyController {
     @Autowired
     private ResidentialPropertyService propertyService;
 
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'OWNER')") // ✅ Correct
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'OWNER','ADMIN')")
 
     @CrossOrigin
     @GetMapping
@@ -37,7 +37,7 @@ public class ResidentialPropertyController {
 
     @CrossOrigin
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('OWNER','CUSTOMER')")
+    @PreAuthorize("hasAnyRole('OWNER','CUSTOMER','ADMIN')")
     @Operation(summary = "Get one property", description = "Return one property by ID")
     public ResponseEntity<ResidentialProperty> getPropertyById(@PathVariable Long id) {
         ResidentialProperty property = propertyService.getById(id);
@@ -93,7 +93,7 @@ public class ResidentialPropertyController {
         return ResponseEntity.ok(imagePaths);
     }
 
-    @PreAuthorize("hasRole('CUSTOMER')")
+    @PreAuthorize("hasAnyRole('CUSTOMER','ADMIN')")
     @CrossOrigin
     @GetMapping("/search")
     @Operation(summary = "Global Search", description = "Search properties using keywords across owner and property fields")

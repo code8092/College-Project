@@ -57,7 +57,7 @@ public class OwnerController {
                 ResponseEntity.ok(properties);
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     @Operation(summary = "Get all owners", description = "Returns all owners")
     public ResponseEntity<List<Owner>> getAllOwner() {
@@ -67,7 +67,7 @@ public class OwnerController {
                 ResponseEntity.ok(owners);
     }
 
-    @PreAuthorize("hasRole('OWNER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     @Operation(summary = "Get one owner by his id", description = "Returns one owner")
     public HttpEntity<Optional<Owner>> getOne(@PathVariable("id") Long id){
@@ -97,7 +97,7 @@ public class OwnerController {
         return ResponseEntity.ok("Property deleted successfully.");
     }
 
-    @PreAuthorize("hasRole('OWNER')")
+    @PreAuthorize("hasAnyRole('OWNER','ADMIN')")
     @CrossOrigin
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete owner", description = "Deletes owner and all associated properties")
