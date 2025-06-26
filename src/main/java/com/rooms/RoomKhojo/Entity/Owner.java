@@ -35,6 +35,7 @@ public class Owner {
 
     @Email(message = "enter valid email")
     @NotEmpty
+    @Column(unique = true)
     private String email;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

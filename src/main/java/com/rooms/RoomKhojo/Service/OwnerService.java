@@ -61,6 +61,11 @@ public class OwnerService {
     }
 
     public Owner saveOwner(Owner owner) {
+        Optional<Owner> existingByEmail = ownerRepository.findByEmail(owner.getEmail());
+        if (existingByEmail.isPresent()) {
+            throw new RuntimeException("Owner with this email already exists");
+        }
+
         return ownerRepository.save(owner);
     }
 

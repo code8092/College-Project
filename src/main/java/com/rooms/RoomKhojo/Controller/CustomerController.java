@@ -45,9 +45,16 @@ public class CustomerController {
     @PostMapping
     @Operation(summary = "Create a customer", description = "Create a customer to the database.")
     public ResponseEntity<Map<String, Object>> saveCustomer(@Valid @RequestBody Customer customer) {
-        Customer savedCustomer = customerService.saveCustomer(customer);
-        return buildResponse("Customer created successfully", savedCustomer, null, HttpStatus.CREATED);
+        try {
+            Customer savedCustomer = customerService.saveCustomer(customer);
+            return buildResponse("Customer created successfully", savedCustomer, null, HttpStatus.CREATED);
+        } catch (RuntimeException ex) {
+            Map<String, String> errors = new HashMap<>();
+            errors.put("email", ex.getMessage());
+            return buildResponse("Customer creation failed", null, errors, HttpStatus.BAD_REQUEST);
+        }
     }
+
 
     @PreAuthorize("hasRole('CUSTOMER')")
     @CrossOrigin

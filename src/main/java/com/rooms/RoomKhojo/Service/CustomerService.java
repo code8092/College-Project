@@ -17,8 +17,12 @@ public class CustomerService {
     }
 
     public Customer saveCustomer(Customer customer) {
+        if (customerRepository.findByEmail(customer.getEmail()).isPresent()) {
+            throw new RuntimeException("Customer with email already exists");
+        }
         return customerRepository.save(customer);
     }
+
 
     public Customer getCustomerById(long id) {
         return customerRepository.findById(id)

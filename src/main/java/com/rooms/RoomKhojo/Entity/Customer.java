@@ -16,6 +16,7 @@ public class Customer {
     private Long id;
 
     @NotEmpty(message = "Name is required")
+    @Column(unique = true)
     private String name;
 
     @NotEmpty(message = "password is required")
@@ -27,7 +28,6 @@ public class Customer {
             regexp = "^(\\+91|91|0)?[6-9]\\d{9}$",
             message = "Invalid Indian phone number. Must be 10 digits starting with 6-9, with optional +91 or 0."
     )
-
     private String phoneNo;
 
     @Email(message = "email is not valid")

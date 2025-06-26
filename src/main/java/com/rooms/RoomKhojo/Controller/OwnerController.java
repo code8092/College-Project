@@ -34,12 +34,20 @@ public class OwnerController {
         return new ResponseEntity<>(response, status);
     }
 
+    @CrossOrigin
     @PostMapping
     @Operation(summary = "Create an owner", description = "This method creates an owner")
     public ResponseEntity<Map<String, Object>> saveOwner(@Valid @RequestBody Owner owner) {
-        Owner savedOwner = ownerService.saveOwner(owner);
-        return buildResponse("Owner created successfully", savedOwner, null, HttpStatus.CREATED);
+        try {
+            Owner savedOwner = ownerService.saveOwner(owner);
+            return buildResponse("Owner created successfully", savedOwner, null, HttpStatus.CREATED);
+        } catch (RuntimeException ex) {
+            Map<String, String> errors = new HashMap<>();
+            errors.put("email", ex.getMessage());
+            return buildResponse("Owner creation failed", null, errors, HttpStatus.BAD_REQUEST);
+        }
     }
+
 
     @PostMapping("/{id}")
     @PreAuthorize("hasRole('OWNER')")
