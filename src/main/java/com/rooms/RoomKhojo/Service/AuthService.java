@@ -20,30 +20,42 @@ public class AuthService {
     @Autowired
     private JwtUtil jwtUtil;
 
-
     public String login(LoginRequest request) {
         String email = request.getEmail();
         String password = request.getPassword();
 
-        var customerResult = customerRepository.findByEmail(email)
-                .filter(customer -> customer.getPassword().equals(password));
-
-        if (customerResult.isPresent()) {
-            return jwtUtil.generateToken(email, "CUSTOMER");
+        // Admin check
+        if (email.equals("admin@roomkhojo.com")) {
+            if (password.equals("admin123")) {
+                return jwtUtil.generateToken(email, "ADMIN");
+            } else {
+                throw new InvalidCredentialsException("password:Incorrect password");
+            }
         }
 
-        var ownerResult = ownerRepository.findByEmail(email)
-                .filter(owner -> owner.getPassword().equals(password));
-
-        if (ownerResult.isPresent()) {
-            return jwtUtil.generateToken(email, "OWNER");
+        // Customer check
+        var customerOpt = customerRepository.findByEmail(email);
+        if (customerOpt.isPresent()) {
+            var customer = customerOpt.get();
+            if (customer.getPassword().equals(password)) {
+                return jwtUtil.generateToken(email, "CUSTOMER");
+            } else {
+                throw new InvalidCredentialsException("password:Incorrect password");
+            }
         }
-        // Inside AuthService.java
-        if (email.equals("admin@roomkhojo.com") && password.equals("admin123")) {
-            return jwtUtil.generateToken(email, "ADMIN");
+
+        // Owner check
+        var ownerOpt = ownerRepository.findByEmail(email);
+        if (ownerOpt.isPresent()) {
+            var owner = ownerOpt.get();
+            if (owner.getPassword().equals(password)) {
+                return jwtUtil.generateToken(email, "OWNER");
+            } else {
+                throw new InvalidCredentialsException("password:Incorrect password");
+            }
         }
 
-        // If no match, throw exception
-        throw new InvalidCredentialsException("Invalid email or password");
+        // If no user found at all
+        throw new InvalidCredentialsException("email:Email not registered");
     }
 }

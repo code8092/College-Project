@@ -90,9 +90,6 @@ public class ResidentialPropertyService {
         return property.getImages();
     }
 
-//    public List<ResidentialProperty> searchPropertiesByLocation(String state, String city) {
-//        return residentialPropertyRepository.searchByLocation(state, city);
-//    }
 public List<ResidentialProperty> globalSearch(String query) {
     String[] keywords = query.toLowerCase().trim().split("\\s+");
     List<ResidentialProperty> allProperties = residentialPropertyRepository.findAll();

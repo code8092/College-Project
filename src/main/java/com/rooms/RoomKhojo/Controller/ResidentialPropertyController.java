@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,90 +16,96 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/properties")
-@Tag(name = "Property API", description = "Property related operation")
+@Tag(name = "Property API", description = "Property related operations")
+@CrossOrigin
 public class ResidentialPropertyController {
 
     @Autowired
     private ResidentialPropertyService propertyService;
 
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'OWNER','ADMIN')")
+    // Helper for consistent JSON response
+    private ResponseEntity<Map<String, Object>> buildResponse(String message, Object body, Map<String, String> errors, HttpStatus status) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", message);
+        response.put("body", body);
+        response.put("errors", errors);
+        response.put("status", status.value());
+        return new ResponseEntity<>(response, status);
+    }
 
-    @CrossOrigin
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'OWNER', 'ADMIN')")
     @GetMapping
     @Operation(summary = "Get all properties", description = "Return all properties")
-    public ResponseEntity<List<ResidentialProperty>> getAllProperties() {
+    public ResponseEntity<Map<String, Object>> getAllProperties() {
         List<ResidentialProperty> properties = propertyService.getAllProperty();
-        return ResponseEntity.ok(properties);
+        return buildResponse("Properties retrieved successfully", properties, null, HttpStatus.OK);
     }
 
-    @CrossOrigin
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('OWNER','CUSTOMER','ADMIN')")
+    @PreAuthorize("hasAnyRole('OWNER', 'CUSTOMER', 'ADMIN')")
     @Operation(summary = "Get one property", description = "Return one property by ID")
-    public ResponseEntity<ResidentialProperty> getPropertyById(@PathVariable Long id) {
+    public ResponseEntity<Map<String, Object>> getPropertyById(@PathVariable Long id) {
         ResidentialProperty property = propertyService.getById(id);
-        return ResponseEntity.ok(property);
+        return buildResponse("Property retrieved successfully", property, null, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('OWNER')")
-    @CrossOrigin
     @PutMapping("/{propertyId}/status")
-    public ResponseEntity<?> updateStatus(@PathVariable Long propertyId, @RequestParam PropertyStatus status) {
+    @PreAuthorize("hasRole('OWNER')")
+    @Operation(summary = "Update property status", description = "Change property status (e.g., AVAILABLE, BOOKED)")
+    public ResponseEntity<Map<String, Object>> updateStatus(@PathVariable Long propertyId, @RequestParam PropertyStatus status) {
         propertyService.updateStatus(propertyId, status);
-        return ResponseEntity.ok("Property status updated to " + status);
+        return buildResponse("Property status updated", status.name(), null, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('OWNER')")
-    @CrossOrigin
     @PostMapping(path = "/{id}/upload-images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Upload images", description = "Upload multiple images for a property by its ID")
+    @PreAuthorize("hasRole('OWNER')")
+    @Operation(summary = "Upload images", description = "Upload multiple images for a property by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Images uploaded successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-
-    public ResponseEntity<?> uploadImages(
+    public ResponseEntity<Map<String, Object>> uploadImages(
             @PathVariable Long id,
             @RequestPart("images") List<MultipartFile> imageFiles) {
 
         try {
             List<String> uploadedPaths = propertyService.uploadImages(id, imageFiles);
-            return ResponseEntity.ok(uploadedPaths);
+            return buildResponse("Images uploaded successfully", uploadedPaths, null, HttpStatus.OK);
         } catch (IOException e) {
-            // This is a checked exception, so it's fine to handle it here
-            return ResponseEntity.internalServerError().body("Error uploading images: " + e.getMessage());
+            Map<String, String> error = new HashMap<>();
+            error.put("exception", e.getMessage());
+            return buildResponse("Error uploading images", null, error, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @PreAuthorize("hasRole('OWNER')")
-    @CrossOrigin
     @PutMapping("/update/{id}")
+    @PreAuthorize("hasRole('OWNER')")
     @Operation(summary = "Update a property", description = "Update property information")
-    public ResponseEntity<ResidentialProperty> updateProperty(
-            @PathVariable("id") long id, @RequestBody ResidentialProperty residentialProperty) {
+    public ResponseEntity<Map<String, Object>> updateProperty(
+            @PathVariable("id") long id,
+            @RequestBody ResidentialProperty residentialProperty) {
 
         ResidentialProperty updatedProperty = propertyService.updateProperty(id, residentialProperty);
-        return ResponseEntity.ok(updatedProperty);
+        return buildResponse("Property updated successfully", updatedProperty, null, HttpStatus.OK);
     }
 
     @GetMapping("/{id}/images")
-    @Operation(summary = "Get images", description = "Return images using property ID")
-    public ResponseEntity<List<String>> getPropertyImages(@PathVariable Long id) {
+    @Operation(summary = "Get property images", description = "Return image paths using property ID")
+    public ResponseEntity<Map<String, Object>> getPropertyImages(@PathVariable Long id) {
         List<String> imagePaths = propertyService.getImagePathsForProperty(id);
-        return ResponseEntity.ok(imagePaths);
+        return buildResponse("Images retrieved successfully", imagePaths, null, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyRole('CUSTOMER','ADMIN')")
-    @CrossOrigin
     @GetMapping("/search")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
     @Operation(summary = "Global Search", description = "Search properties using keywords across owner and property fields")
-    public ResponseEntity<List<ResidentialProperty>> globalSearch(@RequestParam("q") String query) {
+    public ResponseEntity<Map<String, Object>> globalSearch(@RequestParam("q") String query) {
         List<ResidentialProperty> results = propertyService.globalSearch(query);
-        return ResponseEntity.ok(results);
+        return buildResponse("Search results retrieved", results, null, HttpStatus.OK);
     }
 }
