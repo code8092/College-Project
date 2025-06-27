@@ -15,10 +15,11 @@ public class JwtUtil {
     private final Key SECRET_KEY= Keys.hmacShaKeyFor(SECRET_KEY_STRING.getBytes());
     private final long EXPIRATION_TIME = 1000 * 60 * 60;
 
-    public String generateToken(String email, String role){
+    public String generateToken(String email, String role, long id){
         String token= Jwts.builder()
                 .setSubject(email)
                 .claim("role", role)
+                .claim("id", id)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SECRET_KEY)

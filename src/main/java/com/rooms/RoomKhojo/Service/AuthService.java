@@ -1,6 +1,7 @@
 package com.rooms.RoomKhojo.Service;
 
 import com.rooms.RoomKhojo.DTO.LoginRequest;
+import com.rooms.RoomKhojo.Entity.Owner;
 import com.rooms.RoomKhojo.Exception.InvalidCredentialsException;
 import com.rooms.RoomKhojo.Security.JwtUtil;
 import com.rooms.RoomKhojo.repository.CustomerRepository;
@@ -27,29 +28,29 @@ public class AuthService {
         // Admin check
         if (email.equals("admin@roomkhojo.com")) {
             if (password.equals("admin123")) {
-                return jwtUtil.generateToken(email, "ADMIN");
+                return jwtUtil.generateToken(email, "ADMIN", 0L); // Admin ID = 0 (or any fixed value)
             } else {
                 throw new InvalidCredentialsException("password:Incorrect password");
             }
         }
 
-        // Customer check
+// Customer check
         var customerOpt = customerRepository.findByEmail(email);
         if (customerOpt.isPresent()) {
             var customer = customerOpt.get();
             if (customer.getPassword().equals(password)) {
-                return jwtUtil.generateToken(email, "CUSTOMER");
+                return jwtUtil.generateToken(email, "CUSTOMER", customer.getId());
             } else {
                 throw new InvalidCredentialsException("password:Incorrect password");
             }
         }
 
-        // Owner check
+// Owner check
         var ownerOpt = ownerRepository.findByEmail(email);
         if (ownerOpt.isPresent()) {
             var owner = ownerOpt.get();
             if (owner.getPassword().equals(password)) {
-                return jwtUtil.generateToken(email, "OWNER");
+                return jwtUtil.generateToken(email, "OWNER", owner.getId());
             } else {
                 throw new InvalidCredentialsException("password:Incorrect password");
             }
