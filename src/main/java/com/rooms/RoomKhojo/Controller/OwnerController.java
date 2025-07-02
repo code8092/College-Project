@@ -18,14 +18,17 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/Owner")
-@Tag(name = "Owner API", description = "Operation related to Owner API")
+@Tag(name = "Owner API", description = "Operations related to Owner management")
 @CrossOrigin
 public class OwnerController {
 
     @Autowired
     private OwnerService ownerService;
 
-    // Helper method for consistent JSON response
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    // ✅ Helper method for consistent response
     private ResponseEntity<Map<String, Object>> buildResponse(String message, Object body, Map<String, String> errors, HttpStatus status) {
         Map<String, Object> response = new HashMap<>();
         response.put("message", message);
@@ -35,9 +38,8 @@ public class OwnerController {
         return new ResponseEntity<>(response, status);
     }
 
-    @CrossOrigin
     @PostMapping
-    @Operation(summary = "Create an owner", description = "This method creates an owner")
+    @Operation(summary = "Create an Owner", description = "Registers a new owner")
     public ResponseEntity<Map<String, Object>> saveOwner(@Valid @RequestBody Owner owner) {
         try {
             Owner savedOwner = ownerService.saveOwner(owner);
@@ -49,42 +51,30 @@ public class OwnerController {
         }
     }
 
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
     @PostMapping("/property")
     @PreAuthorize("hasRole('OWNER')")
-    @Operation(summary = "Add property for logged-in owner", description = "This adds a property using JWT owner ID")
+    @Operation(summary = "Add Property", description = "Adds a residential property for the logged-in owner")
     public ResponseEntity<Map<String, Object>> addPropertyToOwner(
             @Valid @RequestBody ResidentialPropertyDTO residentialPropertyDTO,
             @RequestHeader("Authorization") String authHeader) {
 
-        // Extract token from header and remove "Bearer " prefix
-        String token = authHeader.substring(7);
-        Long ownerId = jwtUtil.getOwnerIdFromToken(token);
-
+        Long ownerId = jwtUtil.getOwnerIdFromToken(authHeader.substring(7));
         ResidentialProperty savedProperty = ownerService.addPropertyToOwner(ownerId, residentialPropertyDTO);
         return buildResponse("Property added successfully", savedProperty, null, HttpStatus.OK);
     }
 
-
     @GetMapping("/properties")
     @PreAuthorize("hasRole('OWNER')")
-    public ResponseEntity<Map<String, Object>> getPropertiesByOwner(
-            @RequestHeader("Authorization") String authHeader) {
-
-        String token = authHeader.substring(7);
-        Long ownerId = jwtUtil.getOwnerIdFromToken(token);
-
+    @Operation(summary = "Get Properties", description = "Retrieves all properties for the logged-in owner")
+    public ResponseEntity<Map<String, Object>> getPropertiesByOwner(@RequestHeader("Authorization") String authHeader) {
+        Long ownerId = jwtUtil.getOwnerIdFromToken(authHeader.substring(7));
         List<ResidentialProperty> properties = ownerService.getPropertiesByOwnerId(ownerId);
         return buildResponse("Properties retrieved successfully", properties, null, HttpStatus.OK);
     }
 
-
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
-    @Operation(summary = "Get all owners", description = "Returns all owners")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Get All Owners", description = "Fetches all registered owners")
     public ResponseEntity<Map<String, Object>> getAllOwner() {
         List<Owner> owners = ownerService.getAllOwner();
         if (owners.isEmpty()) {
@@ -93,9 +83,9 @@ public class OwnerController {
         return buildResponse("Owners retrieved successfully", owners, null, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyRole('OWNER','ADMIN')")
     @GetMapping("/{id}")
-    @Operation(summary = "Get one owner by ID", description = "Returns one owner")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
+    @Operation(summary = "Get Owner By ID", description = "Fetches a single owner by ID")
     public ResponseEntity<Map<String, Object>> getOne(@PathVariable("id") Long id) {
         Optional<Owner> owner = ownerService.getOne(id);
         return owner
@@ -104,34 +94,32 @@ public class OwnerController {
     }
 
     @PutMapping
+    @PreAuthorize("hasRole('OWNER')")
+    @Operation(summary = "Update Owner", description = "Updates the logged-in owner's details")
     public ResponseEntity<Map<String, Object>> updateOwner(
             @RequestHeader("Authorization") String authHeader,
             @RequestBody Owner ownerDetails) {
 
-        String token = authHeader.substring(7);
-        Long ownerId = jwtUtil.getOwnerIdFromToken(token);
-
+        Long ownerId = jwtUtil.getOwnerIdFromToken(authHeader.substring(7));
         Owner updatedOwner = ownerService.updateOwner(ownerId, ownerDetails);
         return buildResponse("Owner updated successfully", updatedOwner, null, HttpStatus.OK);
     }
 
-
     @DeleteMapping("/properties/{propertyId}")
+    @PreAuthorize("hasRole('OWNER')")
+    @Operation(summary = "Delete Property", description = "Deletes a specific property of the logged-in owner")
     public ResponseEntity<Map<String, Object>> deletePropertyForOwner(
             @RequestHeader("Authorization") String authHeader,
             @PathVariable Long propertyId) {
 
-        String token = authHeader.substring(7);
-        Long ownerId = jwtUtil.getOwnerIdFromToken(token);
-
+        Long ownerId = jwtUtil.getOwnerIdFromToken(authHeader.substring(7));
         ownerService.deletePropertyForOwner(ownerId, propertyId);
         return buildResponse("Property deleted successfully", null, null, HttpStatus.OK);
     }
 
-
-    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete owner", description = "Deletes owner and all associated properties")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Delete Owner", description = "Deletes an owner and all their associated properties")
     public ResponseEntity<Map<String, Object>> deleteOwner(@PathVariable("id") long id) {
         boolean isDeleted = ownerService.deleteOwner(id);
         if (isDeleted) {

@@ -21,10 +21,8 @@ public class AuthController {
 
     @PostMapping
     public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginRequest loginRequest) {
-        String token = authService.login(loginRequest);
-
-        Map<String, String> tokenBody = new HashMap<>();
-        tokenBody.put("token", token);
+        // Get token, id, and role from AuthService
+        Map<String, Object> tokenBody = authService.login(loginRequest);
 
         return buildResponse("Login successful", tokenBody, null, HttpStatus.OK);
     }
@@ -39,7 +37,7 @@ public class AuthController {
         return new ResponseEntity<>(response, status);
     }
 
-    // Nested secure controller for demonstration (also structured)
+    // Optional: Nested secure controller
     @RestController
     @RequestMapping("/secure")
     public static class SecureController {
