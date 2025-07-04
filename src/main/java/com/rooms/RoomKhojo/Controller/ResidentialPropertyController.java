@@ -1,5 +1,6 @@
 package com.rooms.RoomKhojo.Controller;
 
+import com.rooms.RoomKhojo.DTO.PropertyWithOwnerDTO;
 import com.rooms.RoomKhojo.Entity.ResidentialProperty;
 import com.rooms.RoomKhojo.Enum.PropertyStatus;
 import com.rooms.RoomKhojo.Security.JwtUtil;
@@ -41,19 +42,30 @@ public class ResidentialPropertyController {
         return new ResponseEntity<>(response, status);
     }
 
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'OWNER', 'ADMIN')")
     @GetMapping
-    @Operation(summary = "Get all properties", description = "Return all properties")
-    public ResponseEntity<Map<String, Object>> getAllProperties() {
-        List<ResidentialProperty> properties = propertyService.getAllProperty();
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'OWNER', 'ADMIN')")
+    public ResponseEntity<Map<String, Object>> getAllProperties(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
+        String role = jwtUtil.getRoleFromToken(token);
+        Long userId = jwtUtil.getIdFromToken(token);
+
+        List<PropertyWithOwnerDTO> properties;
+
+        if (role.equals("OWNER")) {
+            properties = propertyService.getPropertiesByOwnerId(userId);
+        } else {
+            properties = propertyService.getAllProperty();
+        }
+
         return buildResponse("Properties retrieved successfully", properties, null, HttpStatus.OK);
     }
+
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('OWNER', 'CUSTOMER', 'ADMIN')")
     @Operation(summary = "Get one property", description = "Return one property by ID")
     public ResponseEntity<Map<String, Object>> getPropertyById(@PathVariable Long id) {
-        ResidentialProperty property = propertyService.getById(id);
+        PropertyWithOwnerDTO property = propertyService.getById(id);
         return buildResponse("Property retrieved successfully", property, null, HttpStatus.OK);
     }
 

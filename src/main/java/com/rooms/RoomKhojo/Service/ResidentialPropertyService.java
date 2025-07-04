@@ -1,8 +1,10 @@
 package com.rooms.RoomKhojo.Service;
 
+import com.rooms.RoomKhojo.DTO.PropertyWithOwnerDTO;
 import com.rooms.RoomKhojo.Entity.Customer;
 import com.rooms.RoomKhojo.Entity.ResidentialProperty;
 import com.rooms.RoomKhojo.Enum.PropertyStatus;
+import com.rooms.RoomKhojo.repository.OwnerRepository;
 import com.rooms.RoomKhojo.repository.ResidentialPropertyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,18 +26,35 @@ public class ResidentialPropertyService {
     @Autowired
     private ResidentialPropertyRepository residentialPropertyRepository;
 
+    @Autowired
+    private OwnerRepository ownerRepository;
+
     @Value("${file.upload-dir}")
     private String uploadDir;
 
 
-    public List<ResidentialProperty> getAllProperty() {
-        return residentialPropertyRepository.findAll();
+    public List<PropertyWithOwnerDTO> getAllProperty() {
+        return residentialPropertyRepository.findAll()
+                .stream()
+                .map(PropertyWithOwnerDTO::new)
+                .collect(Collectors.toList());
     }
 
-    public ResidentialProperty getById(long id) {
-        return residentialPropertyRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Property not found with ID: " + id));
+    public List<PropertyWithOwnerDTO> getPropertiesByOwnerId(Long ownerId) {
+        return residentialPropertyRepository.findByOwnerId(ownerId)
+                .stream()
+                .map(PropertyWithOwnerDTO::new)
+                .collect(Collectors.toList());
     }
+
+
+
+    public PropertyWithOwnerDTO getById(long id) {
+        ResidentialProperty property = residentialPropertyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Property not found with ID: " + id));
+        return new PropertyWithOwnerDTO(property);
+    }
+
 
     public void updateStatus(Long propertyId, PropertyStatus status) {
         ResidentialProperty property = residentialPropertyRepository.findById(propertyId)
@@ -148,10 +167,12 @@ public List<ResidentialProperty> globalSearch(String query) {
 
         existingProperty.setLocation(residentialProperty.getLocation());
         existingProperty.setResidentialPropertyType(residentialProperty.getResidentialPropertyType());
+        existingProperty.setPropertyStatus(residentialProperty.getPropertyStatus());
         existingProperty.setFacility(residentialProperty.getFacility());
         existingProperty.setImages(residentialProperty.getImages());
         existingProperty.setRoomSize(residentialProperty.getRoomSize());
         existingProperty.setPrice(residentialProperty.getPrice());
+
 
         return residentialPropertyRepository.save(existingProperty);
     }

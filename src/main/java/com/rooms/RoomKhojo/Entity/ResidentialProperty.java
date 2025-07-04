@@ -27,7 +27,7 @@ public class ResidentialProperty {
     private ResidentialPropertyType residentialPropertyType;
 
     @Enumerated(EnumType.STRING)
-    private PropertyStatus propertyStatus = PropertyStatus.AVAILABLE;
+    private PropertyStatus propertyStatus;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "location_id")
